@@ -43,7 +43,8 @@
     "docs:build": "yarn build && cd docs && yarn && yarn build"
   },
   "dependencies": {
-    "classnames": "^2.2.5"
+    "classnames": "^2.2.5",
+    "react-virtualized": "^9.21.1"
   },
   "peerDependencies": {
     "prop-types": "^15.5.0",
