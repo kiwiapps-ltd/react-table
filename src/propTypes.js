@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 
 export default {
   // General
+  direction: PropTypes.oneOf(["rtl", "ltr"]),
   data: PropTypes.any,
   loading: PropTypes.bool,
   showPagination: PropTypes.bool,

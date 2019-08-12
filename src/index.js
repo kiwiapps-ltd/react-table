@@ -46,6 +46,8 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
     };
   }
 
+  tableRef = React.createRef();
+
   render() {
     const resolvedState = this.getResolvedState();
     const {
@@ -130,7 +132,8 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
       hasHeaderGroups,
       // Sorted Data
       sortedData,
-      currentlyResizing
+      currentlyResizing,
+      direction
     } = resolvedState;
 
     // Pagination
@@ -832,6 +835,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           ...rootProps.style
         }}
         {...rootProps.rest}
+        ref={this.tableRef}
       >
         {showPagination && showPaginationTop ? (
           <div className="pagination-top">{makePagination(true)}</div>
@@ -852,10 +856,30 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
             }}
             {...tBodyProps.rest}
           >
-            <AutoSizer>
-              {({ height, width }) => <List width={width} height={height} rowCount={pageRows.length}
-                                            onRowsRendered={i => makePageRow(pageRows[i], i)}/>}
-            </AutoSizer>
+            {(() => <AutoSizer style={{ width: "100%" }}>
+                {({ height, width }) => {
+                  let currentWidth = width;
+                  if (this.tableRef.current != null) {
+                    currentWidth = this.tableRef.current && this.tableRef.current.querySelector(".rt-tbody").offsetWidth;
+                  }
+                  if (rowMinWidth > width) {
+                    currentWidth = rowMinWidth;
+                  }
+                  return <List style={{ direction: direction }}
+                               width={currentWidth}
+                               height={height} overscanRowCount={5}
+                               rowCount={pageRows.length}
+                               rowHeight={28} rowRenderer={({ key, index, style }) => {
+
+                    return <div key={key} style={style}>
+                      {makePageRow(pageRows[index], index)}
+                    </div>;
+                  }}/>;
+
+
+                }}
+              </AutoSizer>
+            )()}
             {/*{pageRows.map((d, i) => makePageRow(d, i))}*/}
             {/*{padRows.map(makePadRow)}*/}
           </TbodyComponent>
