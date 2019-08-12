@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 export default {
   // General
   direction: PropTypes.oneOf(["rtl", "ltr"]),
+  rowHeight: PropTypes.number.isRequired,
   data: PropTypes.any,
   loading: PropTypes.bool,
   showPagination: PropTypes.bool,

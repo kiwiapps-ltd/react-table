@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import classnames from "classnames";
-import { List, AutoSizer } from "react-virtualized";
+import { List, AutoSizer, CellMeasurerCache, CellMeasurer } from "react-virtualized";
 //
 import _ from "./utils";
 import Lifecycle from "./lifecycle";
@@ -47,6 +47,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
   }
 
   tableRef = React.createRef();
+
 
   render() {
     const resolvedState = this.getResolvedState();
@@ -466,7 +467,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
       );
     };
 
-    const makePageRow = (row, i, path = []) => {
+    const makePageRow = (key, style, row, i, path = []) => {
       const rowInfo = {
         original: row[originalKey],
         row,
@@ -484,10 +485,10 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
       const trGroupProps = getTrGroupProps(finalState, rowInfo, undefined, this);
       const trProps = _.splitProps(getTrProps(finalState, rowInfo, undefined, this));
       return (
-        <TrGroupComponent key={rowInfo.nestingPath.join("_")} {...trGroupProps}>
+        <TrGroupComponent key={key} {...trGroupProps}>
           <TrComponent
             className={classnames(trProps.className, row._viewIndex % 2 ? "-even" : "-odd")}
-            style={trProps.style}
+            style={{ ...trProps.style, ...style }}
             {...trProps.rest}
           >
             {allVisibleColumns.map((column, i2) => {
@@ -867,14 +868,15 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
                   }
                   return <List style={{ direction: direction }}
                                width={currentWidth}
-                               height={height} overscanRowCount={5}
+                               rowHeight={({ index }) => {
+                                 return pageRows[index].rowHeight || this.props.rowHeight;
+                               }}
+                               height={height}
                                rowCount={pageRows.length}
-                               rowHeight={28} rowRenderer={({ key, index, style }) => {
-
-                    return <div key={key} style={style}>
-                      {makePageRow(pageRows[index], index)}
-                    </div>;
-                  }}/>;
+                               overscanRowCount={5}
+                               rowRenderer={({ key, index, style }) => {
+                                 return makePageRow(key, style, pageRows[index], index);
+                               }}/>;
 
 
                 }}

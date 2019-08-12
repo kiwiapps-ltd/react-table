@@ -116,10 +116,7 @@ input-select-style()
     flex-direction: column
     overflow: auto
     // z-index:0
-    .rt-tr-group
-      border-bottom: solid 1px alpha(black, .05)
-      &:last-child
-        border-bottom: 0
+
     .rt-td
       border-right:1px solid alpha(black, .02)
       &:last-child
@@ -135,6 +132,9 @@ input-select-style()
   .rt-tr
     flex: 1 0 auto
     display: inline-flex
+    border-bottom: solid 1px alpha(black, .05)
+    &:last-child
+      border-bottom: 0
   .rt-th
   .rt-td
     flex: 1 0 0px
